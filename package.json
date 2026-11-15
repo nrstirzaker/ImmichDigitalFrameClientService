@@ -2,7 +2,7 @@
   "name": "ImmichDigitalFrameClient",
   "version": "1.0.0",
   "description": "",
-  "main": "scheduler.ts",
+  "main": "job.ts",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,10 +10,19 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@12.18.0",
   "dependencies": {
-    "@supabase/server": "^1.9.2",
+    "@types/winston": "^2.4.4",
+    "cron-translate": "^2.1.0",
     "dotenv": "^18.0.9",
-    "node-schedule": "^2.1.2"
+    "luxon": "^3.7.2",
+    "node-cron": "^4.6.0",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.7.6",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
   }
 }

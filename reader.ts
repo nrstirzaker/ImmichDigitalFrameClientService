@@ -1,38 +1,35 @@
+import {getImageFromImmich, isAssetInAlbum} from "./lib/ImageUtils.ts";
+import fs from "node:fs";
+import {Readable} from "node:stream";
+import type ImmichImageData from './lib/ImmichImageData.ts'
+import {logger} from './lib/logger.ts'
 
-export async function getNewIds():Promise<string[]> {
 
-    const key: string | undefined = process.env.IMMICH_API_KEY
 
-    if (!key){
-        throw new Error('No API key provided.')
+export async function downloadImagesInAlbum(assetIdsAndFilenames: ImmichImageData[],albumId: string | undefined):Promise<void>{
+
+    if (!albumId) {
+        logger.error('No albumId provided')
+        throw new Error('Album id not provided.')
+    }
+    const saveLocation = process.env.PICTURE_FRAME_ALBUM_SAVE_LOCATION
+    if (!albumId) {
+        logger.error('No albumId provided')
+        throw new Error('Album id not provided.')
     }
 
-    const baseURL: string | undefined = process.env.IMMICH_SERVER_URL;
-    if (!baseURL){
-        throw new Error('Base URL of image server not provided.')
+    logger.info("Photoframe Album ID: " + albumId);
+    for (const imageData of assetIdsAndFilenames) {
+        const assetId = imageData["id"]
+        const filename = imageData["originalFileName"]
+        const includeAsset: boolean = await isAssetInAlbum(albumId, assetId)
+
+        if(includeAsset){
+            const img = await getImageFromImmich(assetId);
+            const destination = fs.createWriteStream(saveLocation + filename);
+            Readable.fromWeb(img.body as any).pipe(destination);
+        }
+
     }
 
-    const searchCriteria = {
-        'takenAfter':'2026-11-1T00:00:00.000Z',
-        'takenBefore':'2026-11-6T23:59:59.999Z'
-    }
-
-    const response = await fetch(baseURL+"/api/search/metadata", {
-        method: "POST",
-        headers: {
-            "x-api-key": key,
-            'Content-Type': 'application/json'
-        },
-        body: searchCriteria
-    });
-
-    const result = await response;
-    const json = JSON.stringify(result)
-
-
-    const assets = json['assets']
-
-    return assets;
-
-
-}
+};

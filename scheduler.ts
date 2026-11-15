@@ -1,10 +1,19 @@
-import 'dotenv/config';
-import schedule from 'node-schedule';
-import {getNewIds} from "./reader.ts";
+import cron from 'node-cron';
+import {job} from "./job.ts";
+import {toCron} from 'cron-translate';
+import {logger} from './lib/logger.ts'
 
-// const job = schedule.scheduleJob('*/5 * * * *', async function(){
-//     const ids: string[] = await getNewIds()
-// });
+const environment = process.env.NODE_ENV || 'development';
 
-const ids: string[] = await getNewIds()
-console.log(ids)
+let cronSchedule = toCron('every 5 minutes')
+if (process.env.NODE_ENV === 'production') {
+    let cronSchedule = toCron('every day at 6pm')
+}
+
+const task = cron.schedule(cronSchedule, async () => {
+    logger.info('Job triggered')
+    await job()
+});
+
+task.start();
+//const result = await task.execute();
