@@ -1,6 +1,7 @@
 import {logger} from './logger.ts'
 import {DateTime} from 'luxon'
 import type ImmichImageData from './ImmichImageData.ts'
+import 'dotenv/config';
 
 const baseURL: string | undefined = process.env.IMMICH_SERVER_URL;
 const key: string | undefined = process.env.IMMICH_API_KEY

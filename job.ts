@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import {getDataOnRecentlyUploadedAssets} from "./lib/ImageUtils.ts";
 import type ImmichImageData from "./lib/ImmichImageData.ts";
 import {DateTime} from 'luxon'
